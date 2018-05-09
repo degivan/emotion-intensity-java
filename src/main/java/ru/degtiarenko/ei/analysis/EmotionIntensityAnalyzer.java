@@ -1,8 +1,6 @@
 package ru.degtiarenko.ei.analysis;
 
 import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
-import org.deeplearning4j.nn.modelimport.keras.exceptions.InvalidKerasConfigurationException;
-import org.deeplearning4j.nn.modelimport.keras.exceptions.UnsupportedKerasConfigurationException;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import ru.degtiarenko.ei.analysis.tweets.AnalysedTweet;
 import ru.degtiarenko.ei.analysis.tweets.Tweet;
@@ -19,13 +17,11 @@ import java.util.Map;
 public class EmotionIntensityAnalyzer {
     private final Map<Emotion, MultiLayerNetwork> emotionNetworks = new HashMap<>();
 
-    public EmotionIntensityAnalyzer(Map<Emotion, ModelPath> modelPaths) throws Exception {
+    public EmotionIntensityAnalyzer(Map<Emotion, String> modelPaths) throws Exception {
         for (Emotion emotion : modelPaths.keySet()) {
-            ModelPath modelPath = modelPaths.get(emotion);
-            String jsonPath = modelPath.getPathToJson();
-            String weightsPath = modelPath.getPathToWeights();
-
-            MultiLayerNetwork network = KerasModelImport.importKerasSequentialModelAndWeights(jsonPath, weightsPath);
+            String modelPath = modelPaths.get(emotion);
+            MultiLayerNetwork network = KerasModelImport.importKerasSequentialModelAndWeights(modelPath, true);
+            System.out.println(network.summary());
             emotionNetworks.put(emotion, network);
         }
     }
