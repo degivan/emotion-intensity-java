@@ -21,10 +21,12 @@ public class EmotionIntensityAnalyzer {
     private final Map<Emotion, MultiLayerNetwork> emotionNetworks = new HashMap<>();
     private final Map<Emotion, TweetTokenizer> tweetTokenizers = new HashMap<>();
 
-    //TODO
+
     static {
-        emotionPosition.put(Emotion.JOY, 2);
+        emotionPosition.put(Emotion.ANGER, 0);
         emotionPosition.put(Emotion.SADNESS, 1);
+        emotionPosition.put(Emotion.JOY, 2);
+        emotionPosition.put(Emotion.FEAR, 3);
     }
 
     public EmotionIntensityAnalyzer(Map<Emotion, String> modelPaths, Map<Emotion, String> pathsToWordIndex) throws Exception {

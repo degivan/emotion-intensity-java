@@ -41,7 +41,6 @@ public class TweetTokenizer {
         return result;
     }
 
-    //TODO
     public INDArray tokenize(List<Tweet> tweets) {
         double[][][] featuresMatrix = new double[tweets.size()][1][MAX_WORDS_COUNT];
         for (double[][] featuresRow : featuresMatrix) {
