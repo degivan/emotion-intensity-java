@@ -2,12 +2,25 @@ group 'ru.degtiarenko.ei.analysis'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'application'
+mainClassName = 'ru.degtiarenko.ei.analysis.Main'
 
 sourceCompatibility = 1.8
 
 repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     mavenCentral()
+}
+
+//create a single Jar with all dependencies
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+    }
 }
 
 dependencies {
