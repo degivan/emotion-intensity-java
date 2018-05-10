@@ -15,4 +15,11 @@ public class AnalysedTweet extends Tweet {
     public Map<Emotion, Double> getIntensities() {
         return intensities;
     }
+
+    @Override
+    public String toString() {
+        return "AnalysedTweet{" +
+                "intensities=" + intensities +
+                '}';
+    }
 }

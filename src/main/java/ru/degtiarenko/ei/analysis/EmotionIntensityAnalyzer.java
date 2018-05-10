@@ -2,6 +2,7 @@ package ru.degtiarenko.ei.analysis;
 
 import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import ru.degtiarenko.ei.analysis.tweets.AnalysedTweet;
 import ru.degtiarenko.ei.analysis.tweets.Tweet;
 
@@ -15,14 +16,27 @@ import java.util.Map;
  * Client wraper for analyzer server.
  */
 public class EmotionIntensityAnalyzer {
-    private final Map<Emotion, MultiLayerNetwork> emotionNetworks = new HashMap<>();
+    private final static Map<Emotion, Integer> emotionPosition = new HashMap<>();
 
-    public EmotionIntensityAnalyzer(Map<Emotion, String> modelPaths) throws Exception {
+    private final Map<Emotion, MultiLayerNetwork> emotionNetworks = new HashMap<>();
+    private final Map<Emotion, TweetTokenizer> tweetTokenizers = new HashMap<>();
+
+    //TODO
+    static {
+        emotionPosition.put(Emotion.JOY, 2);
+        emotionPosition.put(Emotion.SADNESS, 1);
+    }
+
+    public EmotionIntensityAnalyzer(Map<Emotion, String> modelPaths, Map<Emotion, String> pathsToWordIndex) throws Exception {
         for (Emotion emotion : modelPaths.keySet()) {
             String modelPath = modelPaths.get(emotion);
             MultiLayerNetwork network = KerasModelImport.importKerasSequentialModelAndWeights(modelPath, true);
-            System.out.println(network.summary());
+
             emotionNetworks.put(emotion, network);
+        }
+        for (Emotion emotion : pathsToWordIndex.keySet()) {
+            String pathToWordIndex = pathsToWordIndex.get(emotion);
+            tweetTokenizers.put(emotion, new TweetTokenizer(pathToWordIndex));
         }
     }
 
@@ -39,7 +53,23 @@ public class EmotionIntensityAnalyzer {
     }
 
     private List<Map<Emotion, Double>> countIntensity(List<Tweet> tweets) throws IOException {
-        //TODO:
-        return null;
+        List<Map<Emotion, Double>> result = new ArrayList<>();
+        for (int i = 0; i < tweets.size(); i++) {
+            result.add(new HashMap<>());
+        }
+
+        for (Emotion emotion : emotionNetworks.keySet()) {
+            MultiLayerNetwork network = emotionNetworks.get(emotion);
+            TweetTokenizer tweetTokenizer = tweetTokenizers.get(emotion);
+            INDArray tweetX = tweetTokenizer.tokenize(tweets);
+            INDArray res = network.output(tweetX);
+            INDArray emotionRes = res.getColumn(emotionPosition.get(emotion));
+            for (int i = 0; i < tweets.size(); i++) {
+                double tweetRes = emotionRes.getDouble(i);
+                result.get(i).put(emotion, tweetRes);
+            }
+        }
+
+        return result;
     }
 }
