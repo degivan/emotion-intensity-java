@@ -11,7 +11,6 @@ import java.util.*;
 
 
 public class EmotionIntensityTool {
-    private static final String MODELS_FOLDER_FILENAME = "/networks/";
     private static final String MODEL_FILENAME_FORMAT = "best_model_%s.h5";
     private static final String WORD_INDEX_FILENAME_FORMAT = "word_index_%s.json";
     private static final String ANALYSE_COMMAND_REGEX = "analyse [\\w,\\s-,/]+\\.txt";
@@ -54,7 +53,7 @@ public class EmotionIntensityTool {
 
     @NotNull
     private static EmotionIntensityAnalyzer createAnalyzer() throws Exception {
-        String modelsDirectoryPath = Paths.get("").toAbsolutePath().toString() + MODELS_FOLDER_FILENAME;
+        String modelsDirectoryPath = getPathToModels();
 
         Map<Emotion, String> modelPaths = new HashMap<>();
         Map<Emotion, String> wordIndexPaths = new HashMap<>();
@@ -71,6 +70,27 @@ public class EmotionIntensityTool {
         }
 
         return new EmotionIntensityAnalyzer(modelPaths, wordIndexPaths);
+    }
+
+    @NotNull
+    private static String getPathToModels() {
+        String startingPath = Paths.get("").toAbsolutePath().toString();
+        String modelsFolderFileName = System.getProperty("modelsFolder");
+
+        if (modelsFolderFileName.startsWith("/")) {
+            modelsFolderFileName = modelsFolderFileName.substring(1);
+            startingPath = "";
+        }
+        if (modelsFolderFileName.endsWith("/")) {
+            modelsFolderFileName = modelsFolderFileName.substring(0, modelsFolderFileName.length() - 1);
+        }
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(startingPath)
+                .append("/")
+                .append(modelsFolderFileName)
+                .append("/");
+        return builder.toString();
     }
 
 }
