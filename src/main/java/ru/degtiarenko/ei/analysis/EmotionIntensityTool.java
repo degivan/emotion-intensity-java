@@ -6,14 +6,17 @@ import ru.degtiarenko.ei.analysis.tweets.Tweet;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class EmotionIntensityTool {
-    private static final String MODEL_FILENAME_FORMAT = "best_model_%s.h5";
-    private static final String WORD_INDEX_FILENAME_FORMAT = "word_index_%s.json";
     private static final String ANALYSE_COMMAND_REGEX = "analyse [\\w,\\s-,/]+\\.txt";
+    private static final String ANY_SYMBOLS_REGEX = "[\\w,\\s-,/]*";
+    private static final String EMOTION_FILENAME_FORMAT = ANY_SYMBOLS_REGEX + "%s" + ANY_SYMBOLS_REGEX + "\\." + "%s";
 
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
@@ -41,9 +44,10 @@ public class EmotionIntensityTool {
 
     private static List<Tweet> extractTweets(String tweetsFileName) throws FileNotFoundException {
         List<Tweet> result = new ArrayList<>();
-        Scanner scanner = new Scanner(new File(tweetsFileName));
+        File source = new File(tweetsFileName);
+        Scanner scanner = new Scanner(source);
 
-        while(scanner.hasNextLine()) {
+        while (scanner.hasNextLine()) {
             result.add(new Tweet(scanner.nextLine()));
         }
 
@@ -54,22 +58,42 @@ public class EmotionIntensityTool {
     @NotNull
     private static EmotionIntensityAnalyzer createAnalyzer() throws Exception {
         String modelsDirectoryPath = getPathToModels();
+        List<Path> filePaths = Files.list(Paths.get(modelsDirectoryPath)).collect(Collectors.toList());
 
         Map<Emotion, String> modelPaths = new HashMap<>();
         Map<Emotion, String> wordIndexPaths = new HashMap<>();
-        for (Emotion emotion: Emotion.values()) {
+        for (Emotion emotion : Emotion.values()) {
             String emotionName = emotion.name().toLowerCase();
 
-            String modelFileName = String.format(MODEL_FILENAME_FORMAT, emotionName);
-            String wordIndexFileName = String.format(WORD_INDEX_FILENAME_FORMAT, emotionName);
-            String pathToModel = modelsDirectoryPath + modelFileName;
-            String pathToWordIndex = modelsDirectoryPath + wordIndexFileName;
+            String modelRegex = createEmotionPathPattern(emotionName, "h5");
+            String wordIndexRegex = createEmotionPathPattern(emotionName, "json");
+            String pathToModel = findMatchingPath(filePaths, modelRegex);
+            String pathToWordIndex = findMatchingPath(filePaths, wordIndexRegex);
 
             modelPaths.put(emotion, pathToModel);
-            wordIndexPaths.put(emotion,pathToWordIndex);
+            wordIndexPaths.put(emotion, pathToWordIndex);
         }
-
+        System.out.println(modelPaths);
+        System.out.println(wordIndexPaths);
         return new EmotionIntensityAnalyzer(modelPaths, wordIndexPaths);
+    }
+
+    private static String findMatchingPath(List<Path> filePaths, String regex) throws FileNotFoundException {
+        List<String> result = filePaths.stream()
+                .map(path -> path.toAbsolutePath().toString())
+                .filter(path -> path.matches(regex))
+                .collect(Collectors.toList());
+        if (result.isEmpty()) {
+            throw new FileNotFoundException("Models folder should contain file matching " + regex + ".");
+        } else if (result.size() > 1) {
+            throw new IllegalArgumentException("Too many files matching " + regex + ".");
+        }
+        return result.get(0);
+    }
+
+    @NotNull
+    private static String createEmotionPathPattern(String emotionName, String resolution) {
+        return String.format(EMOTION_FILENAME_FORMAT, emotionName, resolution);
     }
 
     @NotNull
