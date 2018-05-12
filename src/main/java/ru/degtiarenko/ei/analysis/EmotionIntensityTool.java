@@ -17,10 +17,16 @@ public class EmotionIntensityTool {
     private static final String ANALYSE_COMMAND_REGEX = "analyse [\\w,\\s-,/]+\\.txt";
     private static final String ANY_SYMBOLS_REGEX = "[\\w,\\s-,/]*";
     private static final String EMOTION_FILENAME_FORMAT = ANY_SYMBOLS_REGEX + "%s" + ANY_SYMBOLS_REGEX + "\\." + "%s";
+    private static final String MODEL_RESOLUTION = "h5";
+    private static final String WORD_INDEX_RESOLUTION = "json";
 
     public static void main(String[] args) throws Exception {
+        if (args.length == 0) {
+            System.out.println("Please, provide path to models folder.");
+            System.exit(0);
+        }
+        EmotionIntensityAnalyzer analyzer = createAnalyzer(args[0]);
         Scanner scanner = new Scanner(System.in);
-        EmotionIntensityAnalyzer analyzer = createAnalyzer();
 
         while (true) {
             String command = scanner.nextLine();
@@ -56,8 +62,8 @@ public class EmotionIntensityTool {
     }
 
     @NotNull
-    private static EmotionIntensityAnalyzer createAnalyzer() throws Exception {
-        String modelsDirectoryPath = getPathToModels();
+    private static EmotionIntensityAnalyzer createAnalyzer(String pathToModels) throws Exception {
+        String modelsDirectoryPath = getPathToModels(pathToModels);
         List<Path> filePaths = Files.list(Paths.get(modelsDirectoryPath)).collect(Collectors.toList());
 
         Map<Emotion, String> modelPaths = new HashMap<>();
@@ -65,16 +71,15 @@ public class EmotionIntensityTool {
         for (Emotion emotion : Emotion.values()) {
             String emotionName = emotion.name().toLowerCase();
 
-            String modelRegex = createEmotionPathPattern(emotionName, "h5");
-            String wordIndexRegex = createEmotionPathPattern(emotionName, "json");
+            String modelRegex = createEmotionPathPattern(emotionName, MODEL_RESOLUTION);
+            String wordIndexRegex = createEmotionPathPattern(emotionName, WORD_INDEX_RESOLUTION);
             String pathToModel = findMatchingPath(filePaths, modelRegex);
             String pathToWordIndex = findMatchingPath(filePaths, wordIndexRegex);
 
             modelPaths.put(emotion, pathToModel);
             wordIndexPaths.put(emotion, pathToWordIndex);
         }
-        System.out.println(modelPaths);
-        System.out.println(wordIndexPaths);
+
         return new EmotionIntensityAnalyzer(modelPaths, wordIndexPaths);
     }
 
@@ -97,9 +102,8 @@ public class EmotionIntensityTool {
     }
 
     @NotNull
-    private static String getPathToModels() {
+    private static String getPathToModels(String modelsFolderFileName) {
         String startingPath = Paths.get("").toAbsolutePath().toString();
-        String modelsFolderFileName = System.getProperty("modelsFolder");
 
         if (modelsFolderFileName.startsWith("/")) {
             modelsFolderFileName = modelsFolderFileName.substring(1);
