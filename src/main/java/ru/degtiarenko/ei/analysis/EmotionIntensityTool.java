@@ -9,9 +9,6 @@ import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static ru.degtiarenko.ei.analysis.Emotion.JOY;
-import static ru.degtiarenko.ei.analysis.Emotion.SADNESS;
-
 
 public class EmotionIntensityTool {
     private static final String MODELS_FOLDER_FILENAME = "/networks/";
@@ -61,7 +58,7 @@ public class EmotionIntensityTool {
 
         Map<Emotion, String> modelPaths = new HashMap<>();
         Map<Emotion, String> wordIndexPaths = new HashMap<>();
-        for (Emotion emotion: new Emotion[]{JOY, SADNESS}) {
+        for (Emotion emotion: Emotion.values()) {
             String emotionName = emotion.name().toLowerCase();
 
             String modelFileName = String.format(MODEL_FILENAME_FORMAT, emotionName);

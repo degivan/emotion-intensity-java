@@ -1,6 +1,5 @@
 package ru.degtiarenko.ei.analysis;
 
-import com.google.common.collect.Lists;
 import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
 import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
@@ -13,10 +12,7 @@ import ru.degtiarenko.ei.analysis.tweets.Tweet;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TweetTokenizer {
@@ -65,6 +61,7 @@ public class TweetTokenizer {
         List<String> tokens = tokenizerFactory.create(tweet.getText()).getTokens();
         return tokens.stream()
                 .map(wordIndexMap::get)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 }
