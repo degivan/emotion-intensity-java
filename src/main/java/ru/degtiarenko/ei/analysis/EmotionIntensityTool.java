@@ -26,6 +26,7 @@ public class EmotionIntensityTool {
             System.exit(0);
         }
         EmotionIntensityAnalyzer analyzer = createAnalyzer(args[0]);
+        System.out.println("Analyzer created.");
         Scanner scanner = new Scanner(System.in);
 
         while (true) {

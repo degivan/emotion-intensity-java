@@ -18,8 +18,14 @@ buildscript {
     ext {
         nd4j_backend = "nd4j-native-platform"
     }
-    if (project.hasProperty("backend") && backend.equals("GPU")) {
-        nd4j_backend = "nd4j-cuda-8.0-platform"
+    if (project.hasProperty("backend")) {
+        if (backend.equals("GPU-CUDA-8.0")) {
+            nd4j_backend = "nd4j-cuda-8.0-platform"
+        } else if (backend.equals("GPU-CUDA-9.0")) {
+            nd4j_backend = "nd4j-cuda-9.0-platform"
+        } else {
+            println "WARNING: Unknown backend. Using standard backend instead."
+        }
     }
     println nd4j_backend
     repositories {
