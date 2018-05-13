@@ -15,6 +15,13 @@ repositories {
 
 //create a single Jar with all dependencies
 buildscript {
+    ext {
+        nd4j_backend = "nd4j-native-platform"
+    }
+    if (project.hasProperty("backend") && backend.equals("GPU")) {
+        nd4j_backend = "nd4j-cuda-8.0-platform"
+    }
+    println nd4j_backend
     repositories {
         jcenter()
     }
@@ -26,7 +33,7 @@ buildscript {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile "org.deeplearning4j:deeplearning4j-core:1.0.0-alpha"
-    compile "org.nd4j:nd4j-native-platform:1.0.0-alpha"
+    compile "org.nd4j:${nd4j_backend}:1.0.0-alpha"
     compile "org.slf4j:slf4j-simple:1.7.25"
     compile "org.slf4j:slf4j-api:1.7.25"
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
