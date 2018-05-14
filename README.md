@@ -17,6 +17,7 @@ Java import of emotion intensity prediction model.
 
 * Run `build_emotion_model.py <emotion>` for each emotion (anger, fear, joy and sadness)
 * Models and word-indexes are in folder `networks`
+* Run `change_rec_init.py <pathToFolderWithModels>` to avoid enormous memory usage in next steps
 
 #### Use models
 * Create jar using `gradle shadowJar` command. If you want to use GPU instead of CPU, you can build using `gradle shadowJar -Pbackend=GPU-CUDA-8.0` or `gradle shadowJar -Pbackend=GPU-CUDA-9.0` depending on your version of CUDA.
