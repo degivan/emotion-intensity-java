@@ -5,7 +5,6 @@ Java import of emotion intensity prediction model.
 
 * Java 8 (or more)
 * Gradle 3.0 (or more)
-* Folder with models and word-index files for all emotions (name of every file should contain corresponding emotion)
 * CUDA 8.0 or 9.0 (optional)
 
 ## Usage
