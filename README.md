@@ -21,7 +21,7 @@ Java import of emotion intensity prediction model.
 
 #### Use models
 * Create jar using `gradle shadowJar` command. If you want to use GPU instead of CPU, you can build using `gradle shadowJar -Pbackend=GPU-CUDA-8.0` or `gradle shadowJar -Pbackend=GPU-CUDA-9.0` depending on your version of CUDA.
-* Start using `java -jar <jarName> <pathToFolderWithModels>`. Consider these VM options: `-Xms1G -Xmx2G -Dorg.bytedeco.javacpp.maxbytes=4G -Dorg.bytedeco.javacpp.maxphysicalbytes=4G`. This should provide enough memory to application to run.
+* Start using `java -jar <jarName> <pathToFolderWithModels>`.
 * Type `analyse <filename.txt` to get emotion intensities for all texts (each on separate line)
 * Type `exit` to stop executing
 
