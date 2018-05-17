@@ -17,11 +17,12 @@ Java import of emotion intensity prediction model.
 
 * Run `build_emotion_model.py <emotion>` for each emotion (anger, fear, joy and sadness)
 * Models and word-indexes are in folder `networks`
+* Run `change_rec_init.py <pathToFolderWithModels>` to avoid enormous memory usage in next steps
 
 #### Use models
 * Create jar using `gradle shadowJar` command. If you want to use GPU instead of CPU, you can build using `gradle shadowJar -Pbackend=GPU-CUDA-8.0` or `gradle shadowJar -Pbackend=GPU-CUDA-9.0` depending on your version of CUDA.
-* Start using `java -jar <jarName> <pathToFolderWithModels>`. Consider these VM options: `-Xms1G -Xmx2G -Dorg.bytedeco.javacpp.maxbytes=4G -Dorg.bytedeco.javacpp.maxphysicalbytes=4G`. This should provide enough memory to application to run.
-* Type `analyse <filename.txt` to get emotion intensities for all texts (each on separate line)
+* Start using `java -jar <jarName> <pathToFolderWithModels>`.
+* Type `analyse <filename.txt` to get emotion intensities for all texts. File should contain text of tweets, each on separate line.
 * Type `exit` to stop executing
 
 
