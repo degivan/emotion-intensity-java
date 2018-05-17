@@ -17,12 +17,14 @@ repositories {
 buildscript {
     ext {
         nd4j_backend = "nd4j-native-platform"
+        dl4j_cuda = "deeplearning4j-cuda-8.0"
     }
     if (project.hasProperty("backend")) {
         if (backend.equals("GPU-CUDA-8.0")) {
             nd4j_backend = "nd4j-cuda-8.0-platform"
         } else if (backend.equals("GPU-CUDA-9.0")) {
             nd4j_backend = "nd4j-cuda-9.0-platform"
+            dl4j_cuda = "deeplearning4j-cuda-9.0"
         } else {
             println "WARNING: Unknown backend. Using standard backend instead."
         }
@@ -44,4 +46,7 @@ dependencies {
     compile "org.slf4j:slf4j-api:1.7.25"
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
     compile group: 'org.deeplearning4j', name: 'deeplearning4j-nlp', version: '1.0.0-alpha'
+    // https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-cuda-8.0
+    compile group: 'org.deeplearning4j', name: "${dl4j_cuda}", version: '1.0.0-alpha'
+
 }
